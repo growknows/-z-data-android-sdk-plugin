@@ -12,7 +12,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0'
         //添加 android-gradle-plugin 依赖
-        classpath 'com.zalldata.analytics.android:android-gradle-plugin:3.2.4'
+        classpath 'com.zalldata.analytics.android:android-gradle-plugin:3.8.0'
     }
 }
 
@@ -23,15 +23,15 @@ allprojects {
 }
 ```
 
-（2）在 <font color=red size=4 > **主 module** </font>的 build.gradle 文件中添加 com.sensorsdata.analytics.android 插件、Sensors Analytics SDK 依赖：
+（2）在 <font color=red size=4 > **主 module** </font>的 build.gradle 文件中添加 com.zalldata.analytics.android 插件、ZallData Analytics SDK 依赖：
 
 ```android
 apply plugin: 'com.android.application'
-//添加 com.sensorsdata.analytics.android 插件
+//添加 com.zalldata.analytics.android 插件
 apply plugin: 'com.zalldata.analytics.android'
 
 dependencies {
-   //添加 Sensors Analytics SDK 依赖
+   //添加 Zall Analytics SDK 依赖
    compile 'com.zalldata.analytics.android:ZallDataSDK:4.0.8'
 }
 ```
