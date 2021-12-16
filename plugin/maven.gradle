@@ -1,7 +1,7 @@
 apply plugin: 'maven'
 
 version=pluginVersion
-group = "com.sensorsdata.analytics.android"
+group = "com.zalldata.analytics.android"
 def nexusRepositoryUrl=nexusReleases
 
 if (!false.toBoolean()){
