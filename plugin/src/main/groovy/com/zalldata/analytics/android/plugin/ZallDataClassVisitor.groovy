@@ -157,7 +157,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                 String minPluginVersion = (String) value
                 if (minPluginVersion != "" && minPluginVersion != null) {
                     if (ZallDataUtil.compareVersion(ZallDataTransform.VERSION, minPluginVersion) < 0) {
-                        String errMessage = "你目前集成的卓尔插件版本号为 v${ZallDataTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/zalldata/sa-sdk-android-plugin2"
+                        String errMessage = "你目前集成的卓尔插件版本号为 v${ZallDataTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/zalldata/sa-sdk-android-plugin"
                         Logger.error(errMessage)
                         throw new Error(errMessage)
                     }

@@ -53,9 +53,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'https://github.com/sensorsdata/sa-sdk-android-plugin2'
-                    developerConnection = 'https://github.com/sensorsdata/sa-sdk-android-plugin2.git'
-                    url = 'https://github.com/sensorsdata/sa-sdk-android-plugin2'
+                    connection = 'https://github.com/sensorsdata/sa-sdk-android-plugin'
+                    developerConnection = 'https://github.com/sensorsdata/sa-sdk-android-plugin.git'
+                    url = 'https://github.com/sensorsdata/sa-sdk-android-plugin'
                 }
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
