@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2021/1/13.
+ * Created by guo on 2020/05/21.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,9 +29,9 @@ import org.objectweb.asm.commons.AdviceAdapter
  * 如果当前方法所在的类是 WebView 的子类，并且被处理的方法是目标方法中的一个就不处理；
  * 否则就判断 owner 是否是 WebView 的子类，如果是就处理，否则不处理。
  */
-class ZallDataWebViewMethodVisitor extends AdviceAdapter implements Opcodes {
+class ZallAnalyticsWebViewMethodVisitor extends AdviceAdapter implements Opcodes {
 
-    private ZallDataTransformHelper transformHelper
+    private ZallAnalyticsTransformHelper transformHelper
     private Class webView
     private Class x5WebView
     private boolean isPreviousX5WebView = false
@@ -48,8 +48,8 @@ class ZallDataWebViewMethodVisitor extends AdviceAdapter implements Opcodes {
     private String methodNameDesc
     private boolean shouldSkip = false
 
-    ZallDataWebViewMethodVisitor(MethodVisitor mv, int access, String name, String desc, ZallDataTransformHelper transformHelper, String className, String superName) {
-        super(ZallDataUtil.ASM_VERSION, mv, access, name, desc)
+    ZallAnalyticsWebViewMethodVisitor(MethodVisitor mv, int access, String name, String desc, ZallAnalyticsTransformHelper transformHelper, String className, String superName) {
+        super(ZallAnalyticsUtil.ZSM_VERSION, mv, access, name, desc)
         this.transformHelper = transformHelper
         this.className = className
         this.superName = superName
@@ -98,9 +98,9 @@ class ZallDataWebViewMethodVisitor extends AdviceAdapter implements Opcodes {
                         positionList.reverseEach { tmp ->
                             loadLocal(tmp)
                         }
-                        desc = ZallDataUtil.appendDescBeforeGiven(desc, VIEW_DESC)
+                        desc = ZallAnalyticsUtil.appendDescBeforeGiven(desc, VIEW_DESC)
                         //为保持新 SDK 使用旧版插件问题，会使用新 SDK loadUrl + 2 后缀的方法
-                        mv.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, name + "2", desc, false)
+                        mv.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, name + "2", desc, false)
                     }
                     return
                 }
@@ -129,9 +129,9 @@ class ZallDataWebViewMethodVisitor extends AdviceAdapter implements Opcodes {
                 mv.visitTypeInsn(CHECKCAST, "android/view/View")
             }
         }
-        desc = ZallDataUtil.appendDescBeforeGiven(desc, VIEW_DESC)
+        desc = ZallAnalyticsUtil.appendDescBeforeGiven(desc, VIEW_DESC)
         //为保持新 SDK 使用旧版插件问题，会使用新 SDK loadUrl + 2 后缀的方法
-        mv.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, name + "2", desc, false)
+        mv.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, name + "2", desc, false)
         mv.visitLabel(label)
     }
 

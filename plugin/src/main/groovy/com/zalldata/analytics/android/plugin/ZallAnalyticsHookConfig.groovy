@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2020/4/16.
+ * Created by guo on 2015/08/12.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,13 @@ package com.zalldata.analytics.android.plugin
 
 import org.objectweb.asm.Opcodes
 
-class ZallDataHookConfig {
-    public static final String SENSORS_ANALYTICS_API = "com/zalldata/analytics/android/sdk/ZallDataAutoTrackHelper"
-    public final static HashMap<String, ZallDataMethodCell> INTERFACE_METHODS = new HashMap<>()
-    public final static HashMap<String, ZallDataMethodCell> CLASS_METHODS = new HashMap<>()
+class ZallAnalyticsHookConfig {
+    public static final String ZALL_ANALYTICS_API = "com/zalldata/analytics/android/sdk/ZallDataAutoTrackHelper"
+    public final static HashMap<String, ZallAnalyticsMethodCell> INTERFACE_METHODS = new HashMap<>()
+    public final static HashMap<String, ZallAnalyticsMethodCell> CLASS_METHODS = new HashMap<>()
 
     static {
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onCheckedChanged',
                 '(Landroid/widget/CompoundButton;Z)V',
                 'android/widget/CompoundButton$OnCheckedChangeListener',
@@ -32,7 +32,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/View;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onRatingChanged',
                 '(Landroid/widget/RatingBar;FZ)V',
                 'android/widget/RatingBar$OnRatingBarChangeListener',
@@ -40,7 +40,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/View;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onStopTrackingTouch',
                 '(Landroid/widget/SeekBar;)V',
                 'android/widget/SeekBar$OnSeekBarChangeListener',
@@ -48,7 +48,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/View;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onCheckedChanged',
                 '(Landroid/widget/RadioGroup;I)V',
                 'android/widget/RadioGroup$OnCheckedChangeListener',
@@ -56,7 +56,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/RadioGroup;I)V',
                 1, 2,
                 [Opcodes.ALOAD, Opcodes.ILOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onClick',
                 '(Landroid/content/DialogInterface;I)V',
                 'android/content/DialogInterface$OnClickListener',
@@ -64,7 +64,7 @@ class ZallDataHookConfig {
                 '(Landroid/content/DialogInterface;I)V',
                 1, 2,
                 [Opcodes.ALOAD, Opcodes.ILOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onItemSelected',
                 '(Landroid/widget/AdapterView;Landroid/view/View;IJ)V',
                 'android/widget/AdapterView$OnItemSelectedListener',
@@ -72,7 +72,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/AdapterView;Landroid/view/View;I)V',
                 1, 3,
                 [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onGroupClick',
                 '(Landroid/widget/ExpandableListView;Landroid/view/View;IJ)Z',
                 'android/widget/ExpandableListView$OnGroupClickListener',
@@ -80,7 +80,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/ExpandableListView;Landroid/view/View;I)V',
                 1, 3,
                 [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onChildClick',
                 '(Landroid/widget/ExpandableListView;Landroid/view/View;IIJ)Z',
                 'android/widget/ExpandableListView$OnChildClickListener',
@@ -88,7 +88,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/ExpandableListView;Landroid/view/View;II)V',
                 1, 4,
                 [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD, Opcodes.ILOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onTabChanged',
                 '(Ljava/lang/String;)V',
                 'android/widget/TabHost$OnTabChangeListener',
@@ -96,7 +96,7 @@ class ZallDataHookConfig {
                 '(Ljava/lang/String;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onTabSelected',
                 '(Landroid/support/design/widget/TabLayout$Tab;)V',
                 'android/support/design/widget/TabLayout$OnTabSelectedListener',
@@ -104,7 +104,7 @@ class ZallDataHookConfig {
                 '(Ljava/lang/Object;Ljava/lang/Object;)V',
                 0, 2,
                 [Opcodes.ALOAD, Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onTabSelected',
                 '(Lcom/google/android/material/tabs/TabLayout$Tab;)V',
                 'com/google/android/material/tabs/TabLayout$OnTabSelectedListener',
@@ -112,7 +112,7 @@ class ZallDataHookConfig {
                 '(Ljava/lang/Object;Ljava/lang/Object;)V',
                 0, 2,
                 [Opcodes.ALOAD, Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'android/widget/Toolbar$OnMenuItemClickListener',
@@ -120,7 +120,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'android/support/v7/widget/Toolbar$OnMenuItemClickListener',
@@ -128,7 +128,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'androidx/appcompat/widget/Toolbar$OnMenuItemClickListener',
@@ -136,7 +136,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onClick',
                 '(Landroid/content/DialogInterface;IZ)V',
                 'android/content/DialogInterface$OnMultiChoiceClickListener',
@@ -144,7 +144,7 @@ class ZallDataHookConfig {
                 '(Landroid/content/DialogInterface;I)V',
                 1, 2,
                 [Opcodes.ALOAD, Opcodes.ILOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'android/widget/PopupMenu$OnMenuItemClickListener',
@@ -152,7 +152,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'androidx/appcompat/widget/PopupMenu$OnMenuItemClickListener',
@@ -160,7 +160,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'android/support/v7/widget/PopupMenu$OnMenuItemClickListener',
@@ -168,7 +168,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onNavigationItemSelected',
                 '(Landroid/view/MenuItem;)Z',
                 'com/google/android/material/navigation/NavigationView$OnNavigationItemSelectedListener',
@@ -176,7 +176,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onNavigationItemSelected',
                 '(Landroid/view/MenuItem;)Z',
                 'android/support/design/widget/NavigationView$OnNavigationItemSelectedListener',
@@ -184,7 +184,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onNavigationItemSelected',
                 '(Landroid/view/MenuItem;)Z',
                 'android/support/design/widget/BottomNavigationView$OnNavigationItemSelectedListener',
@@ -192,7 +192,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addInterfaceMethod(new ZallDataMethodCell(
+        addInterfaceMethod(new ZallAnalyticsMethodCell(
                 'onNavigationItemSelected',
                 '(Landroid/view/MenuItem;)Z',
                 'com/google/android/material/bottomnavigation/BottomNavigationView$OnNavigationItemSelectedListener',
@@ -203,7 +203,7 @@ class ZallDataHookConfig {
     }
 
     static {
-        addClassMethod(new ZallDataMethodCell(
+        addClassMethod(new ZallAnalyticsMethodCell(
                 'performClick',
                 '()Z',
                 'androidx/appcompat/widget/ActionMenuPresenter$OverflowMenuButton',
@@ -212,7 +212,7 @@ class ZallDataHookConfig {
                 0, 1,
                 [Opcodes.ALOAD]))
 
-        addClassMethod(new ZallDataMethodCell(
+        addClassMethod(new ZallAnalyticsMethodCell(
                 'performClick',
                 '()Z',
                 'android/support/v7/widget/ActionMenuPresenter$OverflowMenuButton',
@@ -221,7 +221,7 @@ class ZallDataHookConfig {
                 0, 1,
                 [Opcodes.ALOAD]))
 
-        addClassMethod(new ZallDataMethodCell(
+        addClassMethod(new ZallAnalyticsMethodCell(
                 'performClick',
                 '()Z',
                 'android/widget/ActionMenuPresenter$OverflowMenuButton',
@@ -231,13 +231,13 @@ class ZallDataHookConfig {
                 [Opcodes.ALOAD]))
     }
 
-    static void addInterfaceMethod(ZallDataMethodCell zallAnalyticsMethodCell) {
+    static void addInterfaceMethod(ZallAnalyticsMethodCell zallAnalyticsMethodCell) {
         if (zallAnalyticsMethodCell != null) {
             INTERFACE_METHODS.put(zallAnalyticsMethodCell.parent + zallAnalyticsMethodCell.name + zallAnalyticsMethodCell.desc, zallAnalyticsMethodCell)
         }
     }
 
-    static void addClassMethod(ZallDataMethodCell zallAnalyticsMethodCell) {
+    static void addClassMethod(ZallAnalyticsMethodCell zallAnalyticsMethodCell) {
         if (zallAnalyticsMethodCell != null) {
             CLASS_METHODS.put(zallAnalyticsMethodCell.parent + zallAnalyticsMethodCell.name + zallAnalyticsMethodCell.desc, zallAnalyticsMethodCell)
         }
@@ -247,11 +247,11 @@ class ZallDataHookConfig {
      * android.gradle 3.2.1 版本中，针对 Lambda 表达式处理
      */
 
-    public final static HashMap<String, ZallDataMethodCell> LAMBDA_METHODS = new HashMap<>()
+    public final static HashMap<String, ZallAnalyticsMethodCell> LAMBDA_METHODS = new HashMap<>()
     //lambda 参数优化取样
-    public final static ArrayList<ZallDataMethodCell> SAMPLING_LAMBDA_METHODS = new ArrayList<>()
+    public final static ArrayList<ZallAnalyticsMethodCell> SAMPLING_LAMBDA_METHODS = new ArrayList<>()
     static {
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onClick',
                 '(Landroid/view/View;)V',
                 'Landroid/view/View$OnClickListener;',
@@ -259,7 +259,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/View;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        SAMPLING_LAMBDA_METHODS.add(new ZallDataMethodCell(
+        SAMPLING_LAMBDA_METHODS.add(new ZallAnalyticsMethodCell(
                 'onClick',
                 '(Landroid/view/View;)V',
                 'Landroid/view/View$OnClickListener;',
@@ -267,7 +267,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/View;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onCheckedChanged',
                 '(Landroid/widget/CompoundButton;Z)V',
                 'Landroid/widget/CompoundButton$OnCheckedChangeListener;',
@@ -275,7 +275,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/View;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onRatingChanged',
                 '(Landroid/widget/RatingBar;FZ)V',
                 'Landroid/widget/RatingBar$OnRatingBarChangeListener;',
@@ -283,7 +283,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/View;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onCheckedChanged',
                 '(Landroid/widget/RadioGroup;I)V',
                 'Landroid/widget/RadioGroup$OnCheckedChangeListener;',
@@ -291,7 +291,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/RadioGroup;I)V',
                 1, 2,
                 [Opcodes.ALOAD, Opcodes.ILOAD]))
-        SAMPLING_LAMBDA_METHODS.add(new ZallDataMethodCell(
+        SAMPLING_LAMBDA_METHODS.add(new ZallAnalyticsMethodCell(
                 'onCheckedChanged',
                 '(Landroid/widget/RadioGroup;I)V',
                 'Landroid/widget/RadioGroup$OnCheckedChangeListener;',
@@ -299,7 +299,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/RadioGroup;I)V',
                 1, 2,
                 [Opcodes.ALOAD, Opcodes.ILOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onClick',
                 '(Landroid/content/DialogInterface;I)V',
                 'Landroid/content/DialogInterface$OnClickListener;',
@@ -307,7 +307,7 @@ class ZallDataHookConfig {
                 '(Landroid/content/DialogInterface;I)V',
                 1, 2,
                 [Opcodes.ALOAD, Opcodes.ILOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onItemClick',
                 '(Landroid/widget/AdapterView;Landroid/view/View;IJ)V',
                 'Landroid/widget/AdapterView$OnItemClickListener;',
@@ -315,7 +315,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/AdapterView;Landroid/view/View;I)V',
                 1, 3,
                 [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD]))
-        SAMPLING_LAMBDA_METHODS.add(new ZallDataMethodCell(
+        SAMPLING_LAMBDA_METHODS.add(new ZallAnalyticsMethodCell(
                 'onItemClick',
                 '(Landroid/widget/AdapterView;Landroid/view/View;IJ)V',
                 'Landroid/widget/AdapterView$OnItemClickListener;',
@@ -323,7 +323,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/AdapterView;Landroid/view/View;I)V',
                 1, 3,
                 [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onGroupClick',
                 '(Landroid/widget/ExpandableListView;Landroid/view/View;IJ)Z',
                 'Landroid/widget/ExpandableListView$OnGroupClickListener;',
@@ -331,7 +331,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/ExpandableListView;Landroid/view/View;I)V',
                 1, 3,
                 [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onChildClick',
                 '(Landroid/widget/ExpandableListView;Landroid/view/View;IIJ)Z',
                 'Landroid/widget/ExpandableListView$OnChildClickListener;',
@@ -339,7 +339,7 @@ class ZallDataHookConfig {
                 '(Landroid/widget/ExpandableListView;Landroid/view/View;II)V',
                 1, 4,
                 [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ILOAD, Opcodes.ILOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onTabChanged',
                 '(Ljava/lang/String;)V',
                 'Landroid/widget/TabHost$OnTabChangeListener;',
@@ -347,7 +347,7 @@ class ZallDataHookConfig {
                 '(Ljava/lang/String;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onNavigationItemSelected',
                 '(Landroid/view/MenuItem;)Z',
                 'Lcom/google/android/material/navigation/NavigationView$OnNavigationItemSelectedListener;',
@@ -355,7 +355,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onNavigationItemSelected',
                 '(Landroid/view/MenuItem;)Z',
                 'Landroid/support/design/widget/NavigationView$OnNavigationItemSelectedListener;',
@@ -363,7 +363,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onNavigationItemSelected',
                 '(Landroid/view/MenuItem;)Z',
                 'Landroid/support/design/widget/BottomNavigationView$OnNavigationItemSelectedListener;',
@@ -371,7 +371,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onNavigationItemSelected',
                 '(Landroid/view/MenuItem;)Z',
                 'Lcom/google/android/material/bottomnavigation/BottomNavigationView$OnNavigationItemSelectedListener;',
@@ -379,7 +379,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'Landroid/widget/Toolbar$OnMenuItemClickListener;',
@@ -387,7 +387,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'Landroid/support/v7/widget/Toolbar$OnMenuItemClickListener;',
@@ -395,7 +395,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'Landroidx/appcompat/widget/Toolbar$OnMenuItemClickListener;',
@@ -403,7 +403,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onClick',
                 '(Landroid/content/DialogInterface;IZ)V',
                 'Landroid/content/DialogInterface$OnMultiChoiceClickListener;',
@@ -411,7 +411,7 @@ class ZallDataHookConfig {
                 '(Landroid/content/DialogInterface;I)V',
                 1, 2,
                 [Opcodes.ALOAD, Opcodes.ILOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'Landroid/widget/PopupMenu$OnMenuItemClickListener;',
@@ -419,7 +419,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'Landroidx/appcompat/widget/PopupMenu$OnMenuItemClickListener;',
@@ -427,7 +427,7 @@ class ZallDataHookConfig {
                 '(Landroid/view/MenuItem;)V',
                 1, 1,
                 [Opcodes.ALOAD]))
-        addLambdaMethod(new ZallDataMethodCell(
+        addLambdaMethod(new ZallAnalyticsMethodCell(
                 'onMenuItemClick',
                 '(Landroid/view/MenuItem;)Z',
                 'Landroid/support/v7/widget/PopupMenu$OnMenuItemClickListener;',
@@ -439,7 +439,7 @@ class ZallDataHookConfig {
         // Todo: 扩展
     }
 
-    static void addLambdaMethod(ZallDataMethodCell zallAnalyticsMethodCell) {
+    static void addLambdaMethod(ZallAnalyticsMethodCell zallAnalyticsMethodCell) {
         if (zallAnalyticsMethodCell != null) {
             LAMBDA_METHODS.put(zallAnalyticsMethodCell.parent + zallAnalyticsMethodCell.name + zallAnalyticsMethodCell.desc, zallAnalyticsMethodCell)
         }

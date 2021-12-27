@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2020/1/20.
+ * Created by guo on 2018/12/01.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,15 +18,15 @@ package com.zalldata.analytics.android.plugin
 
 import com.android.build.gradle.AppExtension
 
-class ZallDataTransformHelper {
+class ZallAnalyticsTransformHelper {
 
-    ZallDataExtension extension
+    ZallAnalyticsExtension extension
     AppExtension android
     RN_STATE rnState = RN_STATE.NOT_FOUND
     String rnVersion = ""
-    ZallDataSDKHookConfig zallAnalyticsHookConfig
-    boolean disableZallDataMultiThread
-    boolean disableZallDataIncremental
+    ZallAnalyticsSDKHookConfig zallAnalyticsHookConfig
+    boolean disableZallAnalyticsMultiThread
+    boolean disableZallAnalyticsIncremental
     boolean isHookOnMethodEnter
     HashSet<String> exclude = new HashSet<>(['com.zalldata.analytics.android.sdk',
                                              'android.support',
@@ -66,7 +66,7 @@ class ZallDataTransformHelper {
                                                    'android.support.v7.widget.ActionMenuPresenter$OverflowMenuButton']
     URLClassLoader urlClassLoader
 
-    ZallDataTransformHelper(ZallDataExtension extension, AppExtension android) {
+    ZallAnalyticsTransformHelper(ZallAnalyticsExtension extension, AppExtension android) {
         this.extension = extension
         this.android = android
     }
@@ -94,12 +94,12 @@ class ZallDataTransformHelper {
         if (includePackages != null) {
             include.addAll(includePackages)
         }
-        createZallDataHookConfig()
+        createZallAnalyticsHookConfig()
     }
 
-    private void createZallDataHookConfig() {
-        zallAnalyticsHookConfig = new ZallDataSDKHookConfig()
-        List<MetaProperty> metaProperties = ZallDataSDKExtension.getMetaClass().properties
+    private void createZallAnalyticsHookConfig() {
+        zallAnalyticsHookConfig = new ZallAnalyticsSDKHookConfig()
+        List<MetaProperty> metaProperties = ZallAnalyticsSDKExtension.getMetaClass().properties
         for (it in metaProperties) {
             if (it.name == 'class') {
                 continue

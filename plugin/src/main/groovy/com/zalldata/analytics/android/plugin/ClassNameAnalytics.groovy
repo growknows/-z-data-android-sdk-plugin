@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2020/9/7.
+ * Created by guo on 2018/12/01.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ class ClassNameAnalytics {
     boolean isZallDataAPI = false
     boolean isZallDataUtils = false
     boolean isZALog = false
-    def methodCells = new ArrayList<ZallDataMethodCell>()
+    def methodCells = new ArrayList<ZallAnalyticsMethodCell>()
     boolean isAppWebViewInterface = false
 
     ClassNameAnalytics(String className) {

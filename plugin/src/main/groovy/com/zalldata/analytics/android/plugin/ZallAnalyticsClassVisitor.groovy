@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2020/2/7.
+ * Created by guo on 2015/08/01.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  */
 package com.zalldata.analytics.android.plugin
 
-import com.zalldata.analytics.android.plugin.push.ZallDataPushMethodVisitor
+import com.zalldata.analytics.android.plugin.push.ZallAnalyticsPushMethodVisitor
 import com.zalldata.analytics.android.plugin.push.ZallPushInjected
 import com.zalldata.analytics.android.plugin.hook.config.ZallFragmentHookConfig
 import com.zalldata.analytics.android.plugin.utils.VersionUtils
@@ -28,7 +28,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 
-class ZallDataClassVisitor extends ClassVisitor {
+class ZallAnalyticsClassVisitor extends ClassVisitor {
     private String mClassName
     private String mSuperName
     private String[] mInterfaces
@@ -36,15 +36,15 @@ class ZallDataClassVisitor extends ClassVisitor {
     private boolean isFoundOnNewIntent = false
     private ClassVisitor classVisitor
 
-    private ZallDataTransformHelper transformHelper
+    private ZallAnalyticsTransformHelper transformHelper
 
     private ClassNameAnalytics classNameAnalytics
 
-    private ArrayList<ZallDataMethodCell> methodCells = new ArrayList<>()
+    private ArrayList<ZallAnalyticsMethodCell> methodCells = new ArrayList<>()
 
     private int version
 
-    private HashMap<String, ZallDataMethodCell> mLambdaMethodCells = new HashMap<>()
+    private HashMap<String, ZallAnalyticsMethodCell> mLambdaMethodCells = new HashMap<>()
 
     private boolean isExtendsActivity
     // 是否是 AndroidTV 版本
@@ -55,8 +55,8 @@ class ZallDataClassVisitor extends ClassVisitor {
         return super.clone()
     }
 
-    ZallDataClassVisitor(final ClassVisitor classVisitor, ClassNameAnalytics classNameAnalytics, ZallDataTransformHelper transformHelper) {
-        super(ZallDataUtil.ASM_VERSION, classVisitor)
+    ZallAnalyticsClassVisitor(final ClassVisitor classVisitor, ClassNameAnalytics classNameAnalytics, ZallAnalyticsTransformHelper transformHelper) {
+        super(ZallAnalyticsUtil.ZSM_VERSION, classVisitor)
         this.classVisitor = classVisitor
         this.classNameAnalytics = classNameAnalytics
         this.transformHelper = transformHelper
@@ -92,7 +92,7 @@ class ZallDataClassVisitor extends ClassVisitor {
         mInterfaces = interfaces
         this.version = version
         super.visit(version, access, name, signature, superName, interfaces)
-        isExtendsActivity = ZallDataUtil.isInstanceOfActivity(superName)
+        isExtendsActivity = ZallAnalyticsUtil.isInstanceOfActivity(superName)
         if (Logger.debug) {
             Logger.info("开始扫描类：${mClassName}")
             Logger.info("类详情：version=${version};\taccess=${Logger.accCode2String(access)};\tname=${name};\tsignature=${signature};\tsuperName=${superName};\tinterfaces=${interfaces.toArrayString()}\n")
@@ -110,14 +110,14 @@ class ZallDataClassVisitor extends ClassVisitor {
             ZallPushInjected.addOnNewIntent(classVisitor)
         }
 
-        if (ZallDataUtil.isInstanceOfFragment(mSuperName)) {
+        if (ZallAnalyticsUtil.isInstanceOfFragment(mSuperName)) {
             MethodVisitor mv
             // 添加剩下的方法，确保super.onHiddenChanged(hidden);等先被调用
-            Iterator<Map.Entry<String, ZallDataMethodCell>> iterator = ZallFragmentHookConfig.FRAGMENT_METHODS.entrySet().iterator()
+            Iterator<Map.Entry<String, ZallAnalyticsMethodCell>> iterator = ZallFragmentHookConfig.FRAGMENT_METHODS.entrySet().iterator()
             while (iterator.hasNext()) {
-                Map.Entry<String, ZallDataMethodCell> entry = iterator.next()
+                Map.Entry<String, ZallAnalyticsMethodCell> entry = iterator.next()
                 String key = entry.getKey()
-                ZallDataMethodCell methodCell = entry.getValue()
+                ZallAnalyticsMethodCell methodCell = entry.getValue()
                 if (visitedFragMethods.contains(key)) {
                     continue
                 }
@@ -126,7 +126,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                 // call super
                 visitMethodWithLoadedParams(mv, Opcodes.INVOKESPECIAL, mSuperName, methodCell.name, methodCell.desc, methodCell.paramsStart, methodCell.paramsCount, methodCell.opcodes)
                 // call injected method
-                visitMethodWithLoadedParams(mv, Opcodes.INVOKESTATIC, ZallFragmentHookConfig.SENSORS_FRAGMENT_TRACK_HELPER_API, methodCell.agentName, methodCell.agentDesc, methodCell.paramsStart, methodCell.paramsCount, methodCell.opcodes)
+                visitMethodWithLoadedParams(mv, Opcodes.INVOKESTATIC, ZallFragmentHookConfig.ZALL_FRAGMENT_TRACK_HELPER_API, methodCell.agentName, methodCell.agentDesc, methodCell.paramsStart, methodCell.paramsCount, methodCell.opcodes)
                 mv.visitInsn(Opcodes.RETURN)
                 mv.visitMaxs(methodCell.paramsCount, methodCell.paramsCount)
                 mv.visitEnd()
@@ -148,16 +148,16 @@ class ZallDataClassVisitor extends ClassVisitor {
         if (classNameAnalytics.isZallDataAPI) {
             if ('VERSION' == name) {
                 String version = (String) value
-                if (ZallDataUtil.compareVersion(ZallDataTransform.MIN_SDK_VERSION, version) > 0) {
-                    String errMessage = "你目前集成的卓尔埋点 SDK 版本号为 v${version}，请升级到 v${ZallDataTransform.MIN_SDK_VERSION} 及以上的版本。详情请参考：https://github.com/zalldata/sa-sdk-android"
+                if (ZallAnalyticsUtil.compareVersion(ZallAnalyticsTransform.MIN_SDK_VERSION, version) > 0) {
+                    String errMessage = "你目前集成的神策埋点 SDK 版本号为 v${version}，请升级到 v${ZallAnalyticsTransform.MIN_SDK_VERSION} 及以上的版本。详情请参考：https://github.com/zalldata/sa-sdk-android"
                     Logger.error(errMessage)
                     throw new Error(errMessage)
                 }
             } else if ('MIN_PLUGIN_VERSION' == name) {
                 String minPluginVersion = (String) value
                 if (minPluginVersion != "" && minPluginVersion != null) {
-                    if (ZallDataUtil.compareVersion(ZallDataTransform.VERSION, minPluginVersion) < 0) {
-                        String errMessage = "你目前集成的卓尔插件版本号为 v${ZallDataTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/zalldata/sa-sdk-android-plugin"
+                    if (ZallAnalyticsUtil.compareVersion(ZallAnalyticsTransform.VERSION, minPluginVersion) < 0) {
+                        String errMessage = "你目前集成的神策插件版本号为 v${ZallAnalyticsTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/zalldata/za-sdk-android-plugin"
                         Logger.error(errMessage)
                         throw new Error(errMessage)
                     }
@@ -191,14 +191,14 @@ class ZallDataClassVisitor extends ClassVisitor {
 
         MethodVisitor methodVisitor = cv.visitMethod(access, name, desc, signature, exceptions)
         if (transformHelper.extension != null && transformHelper.extension.autoHandleWebView && transformHelper.urlClassLoader != null) {
-            methodVisitor = new ZallDataWebViewMethodVisitor(methodVisitor, access, name, desc, transformHelper, mClassName, mSuperName)
+            methodVisitor = new ZallAnalyticsWebViewMethodVisitor(methodVisitor, access, name, desc, transformHelper, mClassName, mSuperName)
         }
 
         if (transformHelper.extension != null && !transformHelper.extension.disableTrackPush) {
-            methodVisitor = new ZallDataPushMethodVisitor(methodVisitor, access, name, desc)
+            methodVisitor = new ZallAnalyticsPushMethodVisitor(methodVisitor, access, name, desc)
         }
 
-        ZallDataDefaultMethodVisitor zallAnalyticsDefaultMethodVisitor = new ZallDataDefaultMethodVisitor(methodVisitor, access, name, desc) {
+        ZallAnalyticsDefaultMethodVisitor zallAnalyticsDefaultMethodVisitor = new ZallAnalyticsDefaultMethodVisitor(methodVisitor, access, name, desc) {
             boolean isZallDataTrackViewOnClickAnnotation = false
             boolean isZallDataIgnoreTrackOnClick = false
             String eventName = null
@@ -246,7 +246,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                 }
                 try {
                     String desc2 = (String) bsmArgs[0]
-                    ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.LAMBDA_METHODS.get(Type.getReturnType(desc1).getDescriptor() + name1 + desc2)
+                    ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.LAMBDA_METHODS.get(Type.getReturnType(desc1).getDescriptor() + name1 + desc2)
                     if (zallAnalyticsMethodCell != null) {
                         Handle it = (Handle) bsmArgs[1]
                         mLambdaMethodCells.put(it.name + it.desc, zallAnalyticsMethodCell)
@@ -261,12 +261,12 @@ class ZallDataClassVisitor extends ClassVisitor {
                 super.onMethodEnter()
                 nameDesc = name + desc
                 // Hook Push
-                if (!ZallDataUtil.isStatic(access) && !transformHelper.extension.disableTrackPush) {
+                if (!ZallAnalyticsUtil.isStatic(access) && !transformHelper.extension.disableTrackPush) {
                     ZallPushInjected.handlePush(methodVisitor, mSuperName, nameDesc)
                 }
 
-                pubAndNoStaticAccess = ZallDataUtil.isPublic(access) && !ZallDataUtil.isStatic(access)
-                protectedAndNotStaticAccess = ZallDataUtil.isProtected(access) && !ZallDataUtil.isStatic(access)
+                pubAndNoStaticAccess = ZallAnalyticsUtil.isPublic(access) && !ZallAnalyticsUtil.isStatic(access)
+                protectedAndNotStaticAccess = ZallAnalyticsUtil.isProtected(access) && !ZallAnalyticsUtil.isStatic(access)
                 if (pubAndNoStaticAccess) {
                     if ((nameDesc == 'onClick(Landroid/view/View;)V')) {
                         isOnClickMethod = true
@@ -291,15 +291,15 @@ class ZallDataClassVisitor extends ClassVisitor {
                         methodVisitor.visitVarInsn(ILOAD, 3)
                         methodVisitor.visitVarInsn(ISTORE, third)
                         localIds.add(third)
-                    } else if (ZallDataUtil.isInstanceOfFragment(mSuperName)
+                    } else if (ZallAnalyticsUtil.isInstanceOfFragment(mSuperName)
                             && ZallFragmentHookConfig.FRAGMENT_METHODS.get(nameDesc) != null) {
-                        ZallDataMethodCell zallAnalyticsMethodCell = ZallFragmentHookConfig.FRAGMENT_METHODS.get(nameDesc)
+                        ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallFragmentHookConfig.FRAGMENT_METHODS.get(nameDesc)
                         localIds = new ArrayList<>()
                         Type[] types = Type.getArgumentTypes(desc)
                         for (int i = 1; i < zallAnalyticsMethodCell.paramsCount; i++) {
                             int localId = newLocal(types[i - 1])
                             methodVisitor.visitVarInsn(zallAnalyticsMethodCell.opcodes.get(i), i)
-                            methodVisitor.visitVarInsn(ZallDataUtil.convertOpcodes(zallAnalyticsMethodCell.opcodes.get(i)), localId)
+                            methodVisitor.visitVarInsn(ZallAnalyticsUtil.convertOpcodes(zallAnalyticsMethodCell.opcodes.get(i)), localId)
                             localIds.add(localId)
                         }
                     } else if (nameDesc == "onCheckedChanged(Landroid/widget/RadioGroup;I)V") {
@@ -328,7 +328,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                         methodVisitor.visitVarInsn(ILOAD, 2)
                         methodVisitor.visitVarInsn(ISTORE, secondLocalId)
                         localIds.add(secondLocalId)
-                    } else if (ZallDataUtil.isTargetMenuMethodDesc(nameDesc)) {
+                    } else if (ZallAnalyticsUtil.isTargetMenuMethodDesc(nameDesc)) {
                         localIds = new ArrayList<>()
                         int firstLocalId = newLocal(Type.getObjectType("java/lang/Object"))
                         methodVisitor.visitVarInsn(ALOAD, 0)
@@ -427,10 +427,10 @@ class ZallDataClassVisitor extends ClassVisitor {
 
                 // Lambda 参数优化部分，对现有参数进行复制
                 if (transformHelper.extension.lambdaEnabled) {
-                    ZallDataMethodCell lambdaMethodCell = mLambdaMethodCells.get(nameDesc)
+                    ZallAnalyticsMethodCell lambdaMethodCell = mLambdaMethodCells.get(nameDesc)
                     if (lambdaMethodCell != null) {
                         //判断是否是在采样中，在采样中才会处理或者开关打开也统一处理
-                        if (transformHelper.extension.lambdaParamOptimize || ZallDataHookConfig.SAMPLING_LAMBDA_METHODS.contains(lambdaMethodCell)) {
+                        if (transformHelper.extension.lambdaParamOptimize || ZallAnalyticsHookConfig.SAMPLING_LAMBDA_METHODS.contains(lambdaMethodCell)) {
                             Type[] types = Type.getArgumentTypes(lambdaMethodCell.desc)
                             int length = types.length
                             Type[] lambdaTypes = Type.getArgumentTypes(desc)
@@ -445,12 +445,12 @@ class ZallDataClassVisitor extends ClassVisitor {
                                     }
                                 }
                             }
-                            boolean isStaticMethod = ZallDataUtil.isStatic(access)
+                            boolean isStaticMethod = ZallAnalyticsUtil.isStatic(access)
                             localIds = new ArrayList<>()
                             for (int i = paramStart; i < paramStart + lambdaMethodCell.paramsCount; i++) {
                                 int localId = newLocal(types[i - paramStart])
                                 methodVisitor.visitVarInsn(lambdaMethodCell.opcodes.get(i - paramStart), getVisitPosition(lambdaTypes, i, isStaticMethod))
-                                methodVisitor.visitVarInsn(ZallDataUtil.convertOpcodes(lambdaMethodCell.opcodes.get(i - paramStart)), localId)
+                                methodVisitor.visitVarInsn(ZallAnalyticsUtil.convertOpcodes(lambdaMethodCell.opcodes.get(i - paramStart)), localId)
                                 localIds.add(localId)
                             }
                         }
@@ -473,7 +473,7 @@ class ZallDataClassVisitor extends ClassVisitor {
             @Override
             void visitFieldInsn(int opcode, String owner, String fieldName, String fieldDesc) {
                 if (classNameAnalytics.isZallDataAPI && "ANDROID_PLUGIN_VERSION" == fieldName && opcode == PUTSTATIC) {
-                    methodVisitor.visitLdcInsn(ZallDataTransform.VERSION)
+                    methodVisitor.visitLdcInsn(ZallAnalyticsTransform.VERSION)
                 }
                 super.visitFieldInsn(opcode, owner, fieldName, fieldDesc)
             }
@@ -490,15 +490,15 @@ class ZallDataClassVisitor extends ClassVisitor {
                  * android/support/v4/app/Fragment，android/support/v4/app/ListFragment，android/support/v4/app/DialogFragment，
                  * androidx/fragment/app/Fragment，androidx/fragment/app/ListFragment，androidx/fragment/app/DialogFragment
                  */
-                if (ZallDataUtil.isInstanceOfFragment(mSuperName)) {
-                    ZallDataMethodCell zallAnalyticsMethodCell = ZallFragmentHookConfig.FRAGMENT_METHODS.get(nameDesc)
+                if (ZallAnalyticsUtil.isInstanceOfFragment(mSuperName)) {
+                    ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallFragmentHookConfig.FRAGMENT_METHODS.get(nameDesc)
                     if (zallAnalyticsMethodCell != null) {
                         visitedFragMethods.add(nameDesc)
                         methodVisitor.visitVarInsn(ALOAD, 0)
                         for (int i = 1; i < zallAnalyticsMethodCell.paramsCount; i++) {
                             methodVisitor.visitVarInsn(zallAnalyticsMethodCell.opcodes.get(i), localIds[i - 1])
                         }
-                        methodVisitor.visitMethodInsn(INVOKESTATIC, ZallFragmentHookConfig.SENSORS_FRAGMENT_TRACK_HELPER_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
+                        methodVisitor.visitMethodInsn(INVOKESTATIC, ZallFragmentHookConfig.ZALL_FRAGMENT_TRACK_HELPER_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
                         isHasTracked = true
                         return
                     }
@@ -512,7 +512,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                  * 在 android.gradle 的 3.2.1 版本中，针对 view 的 setOnClickListener 方法 的 lambda 表达式做特殊处理。
                  */
                 if (transformHelper.extension.lambdaEnabled) {
-                    ZallDataMethodCell lambdaMethodCell = mLambdaMethodCells.get(nameDesc)
+                    ZallAnalyticsMethodCell lambdaMethodCell = mLambdaMethodCells.get(nameDesc)
                     if (lambdaMethodCell != null) {
                         Type[] types = Type.getArgumentTypes(lambdaMethodCell.desc)
                         int length = types.length
@@ -528,18 +528,18 @@ class ZallDataClassVisitor extends ClassVisitor {
                                 }
                             }
                         }
-                        boolean isStaticMethod = ZallDataUtil.isStatic(access)
+                        boolean isStaticMethod = ZallAnalyticsUtil.isStatic(access)
                         if (!isStaticMethod) {
                             if (lambdaMethodCell.desc == '(Landroid/view/MenuItem;)Z') {
                                 methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
                                 methodVisitor.visitVarInsn(Opcodes.ALOAD, getVisitPosition(lambdaTypes, paramStart, isStaticMethod))
-                                methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, lambdaMethodCell.agentName, '(Ljava/lang/Object;Landroid/view/MenuItem;)V', false)
+                                methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, lambdaMethodCell.agentName, '(Ljava/lang/Object;Landroid/view/MenuItem;)V', false)
                                 isHasTracked = true
                                 return
                             }
                         }
                         //如果在采样中，就按照最新的处理流程来操作
-                        if (transformHelper.extension.lambdaParamOptimize || ZallDataHookConfig.SAMPLING_LAMBDA_METHODS.contains(lambdaMethodCell)) {
+                        if (transformHelper.extension.lambdaParamOptimize || ZallAnalyticsHookConfig.SAMPLING_LAMBDA_METHODS.contains(lambdaMethodCell)) {
                             for (int i = paramStart; i < paramStart + lambdaMethodCell.paramsCount; i++) {
                                 methodVisitor.visitVarInsn(lambdaMethodCell.opcodes.get(i - paramStart), localIds[i - paramStart])
                             }
@@ -548,7 +548,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                                 methodVisitor.visitVarInsn(lambdaMethodCell.opcodes.get(i - paramStart), getVisitPosition(lambdaTypes, i, isStaticMethod))
                             }
                         }
-                        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, lambdaMethodCell.agentName, lambdaMethodCell.agentDesc, false)
+                        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, lambdaMethodCell.agentName, lambdaMethodCell.agentDesc, false)
                         isHasTracked = true
                         return
                     }
@@ -561,7 +561,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(1))
                             methodVisitor.visitVarInsn(ILOAD, localIds.get(2))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
                             isHasTracked = true
                             return
                         }
@@ -572,7 +572,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                 if (isAndroidTv && isExtendsActivity && nameDesc == 'dispatchKeyEvent(Landroid/view/KeyEvent;)Z') {
                     methodVisitor.visitVarInsn(ALOAD, 0)
                     methodVisitor.visitVarInsn(ALOAD, 1)
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackViewOnClick", "(Landroid/app/Activity;Landroid/view/KeyEvent;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackViewOnClick", "(Landroid/app/Activity;Landroid/view/KeyEvent;)V", false)
                     isHasTracked = true
                     return
                 }
@@ -586,22 +586,22 @@ class ZallDataClassVisitor extends ClassVisitor {
                  * Menu
                  * 目前支持 onContextItemSelected(MenuItem item)、onOptionsItemSelected(MenuItem item)
                  */
-                if (ZallDataUtil.isTargetMenuMethodDesc(nameDesc)) {
+                if (ZallAnalyticsUtil.isTargetMenuMethodDesc(nameDesc)) {
                     methodVisitor.visitVarInsn(ALOAD, localIds[0])
                     methodVisitor.visitVarInsn(ALOAD, localIds[1])
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackMenuItem", "(Ljava/lang/Object;Landroid/view/MenuItem;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackMenuItem", "(Ljava/lang/Object;Landroid/view/MenuItem;)V", false)
                     isHasTracked = true
                     return
                 }
 
                 if (nameDesc == 'onDrawerOpened(Landroid/view/View;)V') {
                     methodVisitor.visitVarInsn(ALOAD, 1)
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackDrawerOpened", "(Landroid/view/View;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackDrawerOpened", "(Landroid/view/View;)V", false)
                     isHasTracked = true
                     return
                 } else if (nameDesc == 'onDrawerClosed(Landroid/view/View;)V') {
                     methodVisitor.visitVarInsn(ALOAD, 1)
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackDrawerClosed", "(Landroid/view/View;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackDrawerClosed", "(Landroid/view/View;)V", false)
                     isHasTracked = true
                     return
                 }
@@ -612,7 +612,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                     return
                 }
 
-                if (!ZallDataUtil.isTargetClassInSpecial(mClassName)) {
+                if (!ZallAnalyticsUtil.isTargetClassInSpecial(mClassName)) {
                     if ((mClassName.startsWith('android/') || mClassName.startsWith('androidx/')) && !(mClassName.startsWith("android/support/v17/leanback") || mClassName.startsWith("androidx/leanback"))) {
                         return
                     }
@@ -622,7 +622,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                     methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                     methodVisitor.visitVarInsn(ALOAD, localIds.get(1))
                     methodVisitor.visitVarInsn(ILOAD, localIds.get(2))
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
                     isHasTracked = true
                     return
                 }
@@ -636,7 +636,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                 if (eventName != null && eventName.length() != 0) {
                     methodVisitor.visitLdcInsn(eventName)
                     methodVisitor.visitLdcInsn(eventProperties)
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "track", "(Ljava/lang/String;Ljava/lang/String;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "track", "(Ljava/lang/String;Ljava/lang/String;)V", false)
                     isHasTracked = true
                     return
                 }
@@ -646,91 +646,91 @@ class ZallDataClassVisitor extends ClassVisitor {
                         methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                         methodVisitor.visitVarInsn(ALOAD, localIds.get(1))
                         methodVisitor.visitVarInsn(ILOAD, localIds.get(2))
-                        methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
+                        methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
                         isHasTracked = true
                         return
                     } else if (mInterfaces.contains('android/widget/RadioGroup$OnCheckedChangeListener')
                             && nameDesc == 'onCheckedChanged(Landroid/widget/RadioGroup;I)V') {
-                        ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.INTERFACE_METHODS
+                        ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.INTERFACE_METHODS
                                 .get('android/widget/RadioGroup$OnCheckedChangeListeneronCheckedChanged(Landroid/widget/RadioGroup;I)V')
                         if (zallAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                             methodVisitor.visitVarInsn(ILOAD, localIds.get(1))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else if (mInterfaces.contains('android/widget/CompoundButton$OnCheckedChangeListener')
                             && nameDesc == 'onCheckedChanged(Landroid/widget/CompoundButton;Z)V') {
-                        ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.INTERFACE_METHODS
+                        ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.INTERFACE_METHODS
                                 .get('android/widget/CompoundButton$OnCheckedChangeListeneronCheckedChanged(Landroid/widget/CompoundButton;Z)V')
                         if (zallAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else if (mInterfaces.contains('android/content/DialogInterface$OnClickListener')
                             && nameDesc == 'onClick(Landroid/content/DialogInterface;I)V') {
-                        ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.INTERFACE_METHODS
+                        ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.INTERFACE_METHODS
                                 .get('android/content/DialogInterface$OnClickListeneronClick(Landroid/content/DialogInterface;I)V')
                         if (zallAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                             methodVisitor.visitVarInsn(ILOAD, localIds.get(1))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else if (mInterfaces.contains('android/widget/ExpandableListView$OnGroupClickListener')
                             && nameDesc == 'onGroupClick(Landroid/widget/ExpandableListView;Landroid/view/View;IJ)Z') {
-                        ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.INTERFACE_METHODS
+                        ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.INTERFACE_METHODS
                                 .get('android/widget/ExpandableListView$OnGroupClickListeneronGroupClick(Landroid/widget/ExpandableListView;Landroid/view/View;IJ)Z')
                         if (zallAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(1))
                             methodVisitor.visitVarInsn(ILOAD, localIds.get(2))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else if (mInterfaces.contains('android/widget/ExpandableListView$OnChildClickListener')
                             && nameDesc == 'onChildClick(Landroid/widget/ExpandableListView;Landroid/view/View;IIJ)Z') {
-                        ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.INTERFACE_METHODS
+                        ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.INTERFACE_METHODS
                                 .get('android/widget/ExpandableListView$OnChildClickListeneronChildClick(Landroid/widget/ExpandableListView;Landroid/view/View;IIJ)Z')
                         if (zallAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(1))
                             methodVisitor.visitVarInsn(ILOAD, localIds.get(2))
                             methodVisitor.visitVarInsn(ILOAD, localIds.get(3))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else if (nameDesc == 'onMenuItemClick(Landroid/view/MenuItem;)Z') {
                         for (interfaceName in mInterfaces) {
-                            ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.INTERFACE_METHODS.get(interfaceName + nameDesc)
+                            ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.INTERFACE_METHODS.get(interfaceName + nameDesc)
                             if (zallAnalyticsMethodCell != null) {
                                 methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
-                                methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
+                                methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
                                 isHasTracked = true
                                 return
                             }
                         }
                     } else if (mInterfaces.contains('android/widget/SeekBar$OnSeekBarChangeListener')
                             && nameDesc == 'onStopTrackingTouch(Landroid/widget/SeekBar;)V') {
-                        ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.INTERFACE_METHODS
+                        ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.INTERFACE_METHODS
                                 .get('android/widget/SeekBar$OnSeekBarChangeListeneronStopTrackingTouch(Landroid/widget/SeekBar;)V')
                         if (zallAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else {
                         for (interfaceName in mInterfaces) {
-                            ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.INTERFACE_METHODS.get(interfaceName + nameDesc)
+                            ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.INTERFACE_METHODS.get(interfaceName + nameDesc)
                             if (zallAnalyticsMethodCell != null) {
-                                visitMethodWithLoadedParams(methodVisitor, INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, zallAnalyticsMethodCell.paramsStart, zallAnalyticsMethodCell.paramsCount, zallAnalyticsMethodCell.opcodes)
+                                visitMethodWithLoadedParams(methodVisitor, INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, zallAnalyticsMethodCell.paramsStart, zallAnalyticsMethodCell.paramsCount, zallAnalyticsMethodCell.opcodes)
                                 isHasTracked = true
                                 return
                             }
@@ -745,9 +745,9 @@ class ZallDataClassVisitor extends ClassVisitor {
             }
 
             void handleClassMethod(String className, String nameDesc) {
-                ZallDataMethodCell zallAnalyticsMethodCell = ZallDataHookConfig.CLASS_METHODS.get(className + nameDesc)
+                ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallAnalyticsHookConfig.CLASS_METHODS.get(className + nameDesc)
                 if (zallAnalyticsMethodCell != null) {
-                    visitMethodWithLoadedParams(methodVisitor, INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, zallAnalyticsMethodCell.paramsStart, zallAnalyticsMethodCell.paramsCount, zallAnalyticsMethodCell.opcodes)
+                    visitMethodWithLoadedParams(methodVisitor, INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, zallAnalyticsMethodCell.agentName, zallAnalyticsMethodCell.agentDesc, zallAnalyticsMethodCell.paramsStart, zallAnalyticsMethodCell.paramsCount, zallAnalyticsMethodCell.opcodes)
                     isHasTracked = true
                 }
             }
@@ -755,9 +755,9 @@ class ZallDataClassVisitor extends ClassVisitor {
             boolean handleRN() {
                 boolean result = false
                 switch (transformHelper.rnState) {
-                    case ZallDataTransformHelper.RN_STATE.NOT_FOUND:
+                    case ZallAnalyticsTransformHelper.RN_STATE.NOT_FOUND:
                         break
-                    case ZallDataTransformHelper.RN_STATE.HAS_VERSION:
+                    case ZallAnalyticsTransformHelper.RN_STATE.HAS_VERSION:
                         if (transformHelper.rnVersion > '2.0.0' && mSuperName == "com/facebook/react/uimanager/ViewGroupManager"
                                 && nameDesc == "addView(Landroid/view/ViewGroup;Landroid/view/View;I)V") {
                             methodVisitor.visitVarInsn(ALOAD, 2)
@@ -774,13 +774,13 @@ class ZallDataClassVisitor extends ClassVisitor {
                             result = true
                         }
                         break
-                    case ZallDataTransformHelper.RN_STATE.NO_VERSION:
+                    case ZallAnalyticsTransformHelper.RN_STATE.NO_VERSION:
                         if (nameDesc == 'setJSResponder(IIZ)V' && mClassName == 'com/facebook/react/uimanager/NativeViewHierarchyManager') {
                             methodVisitor.visitVarInsn(ALOAD, 0)
                             methodVisitor.visitVarInsn(ILOAD, 1)
                             methodVisitor.visitVarInsn(ILOAD, 2)
                             methodVisitor.visitVarInsn(ILOAD, 3)
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackRN", "(Ljava/lang/Object;IIZ)V", false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackRN", "(Ljava/lang/Object;IIZ)V", false)
                             result = true
                         }
                         break
@@ -790,7 +790,7 @@ class ZallDataClassVisitor extends ClassVisitor {
 
             void trackViewOnClick(MethodVisitor mv, int index) {
                 mv.visitVarInsn(ALOAD, index)
-                mv.visitMethodInsn(INVOKESTATIC, ZallDataHookConfig.SENSORS_ANALYTICS_API, "trackViewOnClick", "(Landroid/view/View;)V", false)
+                mv.visitMethodInsn(INVOKESTATIC, ZallAnalyticsHookConfig.ZALL_ANALYTICS_API, "trackViewOnClick", "(Landroid/view/View;)V", false)
             }
 
             /**
@@ -814,7 +814,7 @@ class ZallDataClassVisitor extends ClassVisitor {
                 } else if (s == 'Lcom/zalldata/analytics/android/sdk/ZallDataInstrumented;') {
                     isHasInstrumented = true
                 } else if (s == 'Lcom/zalldata/analytics/android/sdk/ZallDataTrackEvent;') {
-                    return new AnnotationVisitor(ZallDataUtil.ASM_VERSION) {
+                    return new AnnotationVisitor(ZallAnalyticsUtil.ZSM_VERSION) {
                         @Override
                         void visit(String key, Object value) {
                             super.visit(key, value)
@@ -835,7 +835,7 @@ class ZallDataClassVisitor extends ClassVisitor {
         }
         //如果java version 为1.5以前的版本，则使用JSRInlinerAdapter来删除JSR,RET指令
         if (version <= Opcodes.V1_5) {
-            return new ZallDataJSRAdapter(ZallDataUtil.ASM_VERSION, zallAnalyticsDefaultMethodVisitor, access, name, desc, signature, exceptions)
+            return new ZallAnalyticsJSRAdapter(ZallAnalyticsUtil.ZSM_VERSION, zallAnalyticsDefaultMethodVisitor, access, name, desc, signature, exceptions)
         }
         return zallAnalyticsDefaultMethodVisitor
     }

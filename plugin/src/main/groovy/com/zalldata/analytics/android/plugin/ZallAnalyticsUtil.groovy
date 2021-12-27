@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2020/5/21.
+ * Created by guo on 2015/08/12.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,8 @@ import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 
 @CompileStatic
-class ZallDataUtil {
-    public static final int ASM_VERSION = Opcodes.ASM7
+class ZallAnalyticsUtil {
+    public static final int ZSM_VERSION = Opcodes.ASM7
     private static final HashSet<String> targetFragmentClass = new HashSet()
     private static final HashSet<String> targetMenuMethodDesc = new HashSet()
     private static final HashSet<String> specialClass = new HashSet()
@@ -62,7 +62,7 @@ class ZallDataUtil {
         targetActivityClass.add('android/support/v7/app/AppCompatActivity')
         targetActivityClass.add('androidx/appcompat/app/AppCompatActivity')
 
-        for (className in ZallDataTransformHelper.special) {
+        for (className in ZallAnalyticsTransformHelper.special) {
             specialClass.add(className.replace('.', '/'))
         }
 

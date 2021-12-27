@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2021/6/30.
+ * Created by guo on 2021/08/09.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 
 package com.zalldata.analytics.android.plugin.push;
 
-import com.zalldata.analytics.android.plugin.ZallDataUtil;
+import com.zalldata.analytics.android.plugin.ZallAnalyticsUtil;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -27,11 +27,11 @@ import org.objectweb.asm.commons.AdviceAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ZallDataPushMethodVisitor extends AdviceAdapter {
+public class ZallAnalyticsPushMethodVisitor extends AdviceAdapter {
     private static final String PENDING_INTENT_OWNER = "android/app/PendingIntent";
 
-    public ZallDataPushMethodVisitor(MethodVisitor methodVisitor, int access, String name, String descriptor) {
-        super(ZallDataUtil.ASM_VERSION, methodVisitor, access, name, descriptor);
+    public ZallAnalyticsPushMethodVisitor(MethodVisitor methodVisitor, int access, String name, String descriptor) {
+        super(ZallAnalyticsUtil.ZSM_VERSION, methodVisitor, access, name, descriptor);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ZallDataPushMethodVisitor extends AdviceAdapter {
             super.visitMethodInsn(opcodeAndSource, owner, name, descriptor, isInterface);
             positionList.forEach(this::loadLocal);
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, ZallPushInjected.PUSH_TRACK_OWNER, "onNotify",
-                    ZallDataUtil.appendDescBeforeGiven(descriptor, "Landroid/app/NotificationManager;"), false);
+                    ZallAnalyticsUtil.appendDescBeforeGiven(descriptor, "Landroid/app/NotificationManager;"), false);
             return;
         }
 

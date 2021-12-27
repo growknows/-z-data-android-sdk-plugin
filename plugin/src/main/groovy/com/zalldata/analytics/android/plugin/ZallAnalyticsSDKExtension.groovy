@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2021/5/6.
+ * Created by guo on 2018/12/01.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,8 @@
  */
 package com.zalldata.analytics.android.plugin
 
-class ZallDataSDKExtension {
-    // 同ZallDataSDKHookConfig中方法对应, disableIMEI,disableLog,disableJsInterface，disableAndroidID
+class ZallAnalyticsSDKExtension {
+    // 同ZallAnalyticsSDKHookConfig中方法对应, disableIMEI,disableLog,disableJsInterface，disableAndroidID
     boolean disableIMEI = false
     boolean disableLog = false
     boolean disableJsInterface = false

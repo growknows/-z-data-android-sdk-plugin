@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2021/1/19.
+ * Created by guo on 2015/08/12.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,30 +23,30 @@ import org.gradle.api.Project
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.invocation.DefaultGradle
 
-class ZallDataPlugin implements Plugin<Project> {
+class ZallAnalyticsPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         Instantiator ins = ((DefaultGradle) project.getGradle()).getServices().get(Instantiator)
         def args = [ins] as Object[]
-        ZallDataExtension extension = project.extensions.create("zallAnalytics", ZallDataExtension, args)
+        ZallAnalyticsExtension extension = project.extensions.create("zallAnalytics", ZallAnalyticsExtension, args)
         Map<String, ?> properties = project.getProperties()
-        boolean disableZallDataPlugin = Boolean.parseBoolean(properties.getOrDefault("zallAnalytics.disablePlugin", "false")) ||
-                Boolean.parseBoolean(properties.getOrDefault("disableZallDataPlugin", "false"))
-        boolean disableZallDataMultiThreadBuild = Boolean.parseBoolean(properties.getOrDefault("zallAnalytics.disableMultiThreadBuild", "false"))
-        boolean disableZallDataIncrementalBuild = Boolean.parseBoolean(properties.getOrDefault("zallAnalytics.disableIncrementalBuild", "false"))
+        boolean disableZallAnalyticsPlugin = Boolean.parseBoolean(properties.getOrDefault("zallAnalytics.disablePlugin", "false")) ||
+                Boolean.parseBoolean(properties.getOrDefault("disableZallAnalyticsPlugin", "false"))
+        boolean disableZallAnalyticsMultiThreadBuild = Boolean.parseBoolean(properties.getOrDefault("zallAnalytics.disableMultiThreadBuild", "false"))
+        boolean disableZallAnalyticsIncrementalBuild = Boolean.parseBoolean(properties.getOrDefault("zallAnalytics.disableIncrementalBuild", "false"))
         boolean isHookOnMethodEnter = Boolean.parseBoolean(properties.getOrDefault("zallAnalytics.isHookOnMethodEnter", "false"))
         boolean isAndroidTv = Boolean.parseBoolean(properties.getOrDefault("zallAnalytics.isAndroidTv", "false"))
 
-        if (!disableZallDataPlugin) {
+        if (!disableZallAnalyticsPlugin) {
             AppExtension appExtension = project.extensions.findByType(AppExtension.class)
-            ZallDataTransformHelper transformHelper = new ZallDataTransformHelper(extension, appExtension)
-            transformHelper.disableZallDataIncremental = disableZallDataIncrementalBuild
-            transformHelper.disableZallDataMultiThread = disableZallDataMultiThreadBuild
+            ZallAnalyticsTransformHelper transformHelper = new ZallAnalyticsTransformHelper(extension, appExtension)
+            transformHelper.disableZallAnalyticsIncremental = disableZallAnalyticsIncrementalBuild
+            transformHelper.disableZallAnalyticsMultiThread = disableZallAnalyticsMultiThreadBuild
             transformHelper.isHookOnMethodEnter = isHookOnMethodEnter
             VersionUtils.isAndroidTv = isAndroidTv
-            appExtension.registerTransform(new ZallDataTransform(transformHelper))
+            appExtension.registerTransform(new ZallAnalyticsTransform(transformHelper))
         } else {
-            Logger.error("------------您已关闭了卓尔插件--------------")
+            Logger.error("------------您已关闭了神策插件--------------")
         }
     }
 }

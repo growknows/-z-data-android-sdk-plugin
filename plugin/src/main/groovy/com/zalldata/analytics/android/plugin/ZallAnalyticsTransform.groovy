@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2020/5/6.
+ * Created by guo on 2015/08/12.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,9 +46,9 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 
-class ZallDataTransform extends Transform {
-    private ZallDataTransformHelper transformHelper
-    public static final String VERSION = "3.8.0"
+class ZallAnalyticsTransform extends Transform {
+    private ZallAnalyticsTransformHelper transformHelper
+    public static final String VERSION = "3.4.4"
     public static final String MIN_SDK_VERSION = "5.4.3"
     private WaitableExecutor waitableExecutor
     private URLClassLoader urlClassLoader
@@ -56,9 +56,9 @@ class ZallDataTransform extends Transform {
     private String zallSdkJarPath
     private volatile boolean isFoundSDKJar = false
 
-    ZallDataTransform(ZallDataTransformHelper transformHelper) {
+    ZallAnalyticsTransform(ZallAnalyticsTransformHelper transformHelper) {
         this.transformHelper = transformHelper
-        if (!transformHelper.disableZallDataMultiThread) {
+        if (!transformHelper.disableZallAnalyticsMultiThread) {
             waitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
         }
     }
@@ -80,7 +80,7 @@ class ZallDataTransform extends Transform {
 
     @Override
     boolean isIncremental() {
-        return !transformHelper.disableZallDataIncremental
+        return !transformHelper.disableZallAnalyticsIncremental
     }
 
     @Override
@@ -132,7 +132,7 @@ class ZallDataTransform extends Transform {
         if (waitableExecutor) {
             waitableExecutor.waitForTasksWithQuickFail(true)
         }
-        println("[ZallData]: 此次编译共耗时:${System.currentTimeMillis() - startTime}毫秒")
+        println("[ZallAnalytics]: 此次编译共耗时:${System.currentTimeMillis() - startTime}毫秒")
     }
 
     private void beforeTransform(TransformInvocation transformInvocation) {
@@ -140,10 +140,10 @@ class ZallDataTransform extends Transform {
         Logger.printCopyright()
         Logger.setDebug(transformHelper.extension.debug)
         transformHelper.onTransform()
-        println("[ZallData]: 是否开启多线程编译:${!transformHelper.disableZallDataMultiThread}")
-        println("[ZallData]: 是否开启增量编译:${!transformHelper.disableZallDataIncremental}")
-        println("[ZallData]: 此次是否增量编译:$transformInvocation.incremental")
-        println("[ZallData]: 是否在方法进入时插入代码:${transformHelper.isHookOnMethodEnter}")
+        println("[ZallAnalytics]: 是否开启多线程编译:${!transformHelper.disableZallAnalyticsMultiThread}")
+        println("[ZallAnalytics]: 是否开启增量编译:${!transformHelper.disableZallAnalyticsIncremental}")
+        println("[ZallAnalytics]: 此次是否增量编译:$transformInvocation.incremental")
+        println("[ZallAnalytics]: 是否在方法进入时插入代码:${transformHelper.isHookOnMethodEnter}")
 
         traverseForClassLoader(transformInvocation)
     }
@@ -193,17 +193,17 @@ class ZallDataTransform extends Transform {
 
     private void checkRNState() {
         try {
-            Class rnClazz = urlClassLoader.loadClass("com.zalldata.analytics.RNZallDataPackage")
+            Class rnClazz = urlClassLoader.loadClass("com.zalldata.analytics.RNZallAnalyticsPackage")
             try {
                 Field versionField = rnClazz.getDeclaredField("VERSION")
                 versionField.setAccessible(true)
                 transformHelper.rnVersion = versionField.get(null) as String
-                transformHelper.rnState = ZallDataTransformHelper.RN_STATE.HAS_VERSION
+                transformHelper.rnState = ZallAnalyticsTransformHelper.RN_STATE.HAS_VERSION
             } catch (Exception e) {
-                transformHelper.rnState = ZallDataTransformHelper.RN_STATE.NO_VERSION
+                transformHelper.rnState = ZallAnalyticsTransformHelper.RN_STATE.NO_VERSION
             }
         } catch (Exception e) {
-            transformHelper.rnState = ZallDataTransformHelper.RN_STATE.NOT_FOUND
+            transformHelper.rnState = ZallAnalyticsTransformHelper.RN_STATE.NOT_FOUND
         }
     }
 
@@ -382,7 +382,7 @@ class ZallDataTransform extends Transform {
                 byte[] sourceClassBytes
                 try {
                     jarOutputStream.putNextEntry(entry)
-                    sourceClassBytes = ZallDataUtil.toByteArrayAndAutoCloseStream(inputStream)
+                    sourceClassBytes = ZallAnalyticsUtil.toByteArrayAndAutoCloseStream(inputStream)
                 } catch (Exception e) {
                     Logger.error("Exception encountered while processing jar: " + jarFile.getAbsolutePath())
                     IOUtils.closeQuietly(file)
@@ -416,7 +416,7 @@ class ZallDataTransform extends Transform {
     private byte[] modifyClass(byte[] srcClass, ClassNameAnalytics classNameAnalytics) {
         try {
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
-            ClassVisitor classVisitor = new ZallDataClassVisitor(classWriter, classNameAnalytics, transformHelper)
+            ClassVisitor classVisitor = new ZallAnalyticsClassVisitor(classWriter, classNameAnalytics, transformHelper)
             ClassReader cr = new ClassReader(srcClass)
             cr.accept(classVisitor, ClassReader.EXPAND_FRAMES + ClassReader.SKIP_FRAMES)
             return classWriter.toByteArray()
@@ -440,7 +440,7 @@ class ZallDataTransform extends Transform {
             String className = path2ClassName(classFile.absolutePath.replace(dir.absolutePath + File.separator, ""))
             ClassNameAnalytics classNameAnalytics = transformHelper.analytics(className)
             if (classNameAnalytics.isShouldModify) {
-                byte[] sourceClassBytes = ZallDataUtil.toByteArrayAndAutoCloseStream(new FileInputStream(classFile))
+                byte[] sourceClassBytes = ZallAnalyticsUtil.toByteArrayAndAutoCloseStream(new FileInputStream(classFile))
                 byte[] modifiedClassBytes = modifyClass(sourceClassBytes, classNameAnalytics)
                 if (modifiedClassBytes) {
                     modified = new File(tempDir, UUID.randomUUID().toString() + '.class')

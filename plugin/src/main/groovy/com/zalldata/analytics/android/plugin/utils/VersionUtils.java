@@ -8,7 +8,7 @@ import java.net.URLClassLoader;
 public class VersionUtils {
     // 是否打开 TV 开关
     public static boolean isAndroidTv;
-    // 卓尔埋点 SDK 版本号
+    // 神策埋点 SDK 版本号
     public static String zallSDKVersion = "";
 
     /**
@@ -20,7 +20,7 @@ public class VersionUtils {
     }
 
     /**
-     * 读取卓尔 Android 埋点 SDK 版本号
+     * 读取神策 Android 埋点 SDK 版本号
      * @param urlClassLoader ClassLoader
      */
     public static void loadAndroidSDKVersion(URLClassLoader urlClassLoader) {
@@ -29,9 +29,9 @@ public class VersionUtils {
             Field versionField = zallDataAPI.getDeclaredField("VERSION");
             versionField.setAccessible(true);
             zallSDKVersion = (String) versionField.get(null);
-            Logger.info("卓尔埋点 SDK 版本号:" + zallSDKVersion);
+            Logger.info("神策埋点 SDK 版本号:" + zallSDKVersion);
         } catch(Throwable throwable) {
-            Logger.info("卓尔埋点 SDK 版本号读取失败，reason: " + throwable.getMessage());
+            Logger.info("神策埋点 SDK 版本号读取失败，reason: " + throwable.getMessage());
         }
     }
 }

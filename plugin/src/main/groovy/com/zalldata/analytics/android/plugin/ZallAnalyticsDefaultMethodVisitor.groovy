@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2021/9/10.
+ * Created by guo on 2015/08/12.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,12 +22,12 @@ import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.commons.AdviceAdapter
 
-class ZallDataDefaultMethodVisitor extends AdviceAdapter {
+class ZallAnalyticsDefaultMethodVisitor extends AdviceAdapter {
 
     String methodName
 
-    ZallDataDefaultMethodVisitor(MethodVisitor mv, int access, String name, String desc) {
-        super(ZallDataUtil.ASM_VERSION, mv, access, name, desc)
+    ZallAnalyticsDefaultMethodVisitor(MethodVisitor mv, int access, String name, String desc) {
+        super(ZallAnalyticsUtil.ZSM_VERSION, mv, access, name, desc)
         methodName = name
         if (Logger.debug) {
             Logger.info("开始扫描方法：${Logger.accCode2String(access)} ${methodName}${desc}")

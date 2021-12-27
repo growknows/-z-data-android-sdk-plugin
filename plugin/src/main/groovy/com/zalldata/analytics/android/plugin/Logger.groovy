@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2020/9/30.
+ * Created by guo on 2015/08/12.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,7 +59,7 @@ class Logger {
 
     def static error(Object msg) {
         try {
-            println("${LogUI.C_ERROR.value}[ZallData]: ${msg}${LogUI.E_NORMAL.value}")
+            println("${LogUI.C_ERROR.value}[ZallAnalytics]: ${msg}${LogUI.E_NORMAL.value}")
         } catch (Exception e) {
             e.printStackTrace()
         }
@@ -67,7 +67,7 @@ class Logger {
 
     def static warn(Object msg) {
         try {
-            println("${LogUI.C_WARN.value}[ZallData]: ${msg}${LogUI.E_NORMAL.value}")
+            println("${LogUI.C_WARN.value}[ZallAnalytics]: ${msg}${LogUI.E_NORMAL.value}")
         } catch (Exception e) {
             e.printStackTrace()
         }
@@ -79,7 +79,7 @@ class Logger {
     def static info(Object msg) {
         if (debug)
             try {
-                println "[ZallData]: ${msg}"
+                println "[ZallAnalytics]: ${msg}"
             } catch (Exception e) {
                 e.printStackTrace()
             }

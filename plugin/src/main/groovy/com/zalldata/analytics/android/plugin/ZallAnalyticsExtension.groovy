@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2021/10/25.
+ * Created by guo on 2015/08/12.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ import org.gradle.api.Action
 import org.gradle.internal.reflect.Instantiator
 
 
-class ZallDataExtension {
+class ZallAnalyticsExtension {
     public boolean debug = false
     public boolean disableJar = false
     public boolean useInclude = false
@@ -33,13 +33,13 @@ class ZallDataExtension {
     public ArrayList<String> exclude = []
     public ArrayList<String> include = []
 
-    public ZallDataSDKExtension sdk
+    public ZallAnalyticsSDKExtension sdk
 
-    ZallDataExtension(Instantiator ins) {
-        sdk = ins.newInstance(ZallDataSDKExtension)
+    ZallAnalyticsExtension(Instantiator ins) {
+        sdk = ins.newInstance(ZallAnalyticsSDKExtension)
     }
 
-    void sdk(Action<? super ZallDataSDKExtension> action) {
+    void sdk(Action<? super ZallAnalyticsSDKExtension> action) {
         action.execute(sdk)
     }
 

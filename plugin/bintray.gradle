@@ -36,9 +36,9 @@ publishing {
             // 配置 pop 文件格式
             pom {
                 packaging 'jar'
-                name = 'The official Android SDK Plugin for Sensors Analytics.'
-                description = 'The official Android SDK Plugin for Sensors Analytics.'
-                url = 'The official Android SDK Plugin for Sensors Analytics.'
+                name = 'The official Android SDK Plugin for Zall Analytics.'
+                description = 'The official Android SDK Plugin for Zall Analytics.'
+                url = 'The official Android SDK Plugin for Zall Analytics.'
                 licenses {
                     license {
                         name='The Apache Software License, Version 2.0'
@@ -49,13 +49,13 @@ publishing {
                     developer {
                         id = 'dengshiwei'
                         name = 'dengshiwei'
-                        email = 'dengshiwei@sensorsdata.com'
+                        email = 'dengshiwei@zalldata.com'
                     }
                 }
                 scm {
-                    connection = 'https://github.com/sensorsdata/sa-sdk-android-plugin'
-                    developerConnection = 'https://github.com/sensorsdata/sa-sdk-android-plugin.git'
-                    url = 'https://github.com/sensorsdata/sa-sdk-android-plugin'
+                    connection = 'https://github.com/zalldata/za-sdk-android-plugin'
+                    developerConnection = 'https://github.com/zalldata/za-sdk-android-plugin.git'
+                    url = 'https://github.com/zalldata/za-sdk-android-plugin'
                 }
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
@@ -93,8 +93,8 @@ publishing {
         def mavenUser = properties.getProperty("maven.user")
         def mavenPassword = properties.getProperty("maven.password")
         maven {
-            url ='../repo'
-//            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+//            url ='../repo'
+            url = '../repo'
             credentials {
                 username mavenUser
                 password mavenPassword
@@ -104,6 +104,6 @@ publishing {
 }
 
 // 对 mavenAndroid 发布内容进行签名
-//signing {
-//    sign publishing.publications.mavenAndroid
-//}
+signing {
+    sign publishing.publications.mavenAndroid
+}

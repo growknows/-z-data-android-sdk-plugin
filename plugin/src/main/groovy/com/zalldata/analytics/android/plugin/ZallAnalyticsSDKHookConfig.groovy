@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2021/9/19.
+ * Created by guo on 2018/12/01.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,65 +20,65 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
 
 
-class ZallDataSDKHookConfig {
+class ZallAnalyticsSDKHookConfig {
 
-    HashMap<String, HashMap<String, ArrayList<ZallDataMethodCell>>> methodCells = new HashMap<>()
+    HashMap<String, HashMap<String, ArrayList<ZallAnalyticsMethodCell>>> methodCells = new HashMap<>()
 
     void disableIMEI(String methodName) {
-        def imei = new ZallDataMethodCell('getIMEI', '(Landroid/content/Context;)Ljava/lang/String;', 'createGetIMEI')
-        def deviceID = new ZallDataMethodCell('getDeviceID', '(Landroid/content/Context;I)Ljava/lang/String;', 'createGetDeviceID')
+        def imei = new ZallAnalyticsMethodCell('getIMEI', '(Landroid/content/Context;)Ljava/lang/String;', 'createGetIMEI')
+        def deviceID = new ZallAnalyticsMethodCell('getDeviceID', '(Landroid/content/Context;I)Ljava/lang/String;', 'createGetDeviceID')
         def imeiMethods = [imei, deviceID]
-        def imeiMethodCells = new HashMap<String, ArrayList<ZallDataMethodCell>>()
+        def imeiMethodCells = new HashMap<String, ArrayList<ZallAnalyticsMethodCell>>()
         imeiMethodCells.put("com/zalldata/analytics/android/sdk/util/ZallDataUtils", imeiMethods)
         methodCells.put(methodName, imeiMethodCells)
     }
 
     void disableAndroidID(String methodName) {
-        def androidID = new ZallDataMethodCell('getAndroidID', '(Landroid/content/Context;)Ljava/lang/String;', 'createGetAndroidID')
+        def androidID = new ZallAnalyticsMethodCell('getAndroidID', '(Landroid/content/Context;)Ljava/lang/String;', 'createGetAndroidID')
         def androidIDMethods = [androidID]
-        def androidIdMethodCells = new HashMap<String, ArrayList<ZallDataMethodCell>>()
+        def androidIdMethodCells = new HashMap<String, ArrayList<ZallAnalyticsMethodCell>>()
         androidIdMethodCells.put('com/zalldata/analytics/android/sdk/util/ZallDataUtils', androidIDMethods)
         methodCells.put(methodName, androidIdMethodCells)
     }
 
     void disableLog(String methodName) {
-        def info = new ZallDataMethodCell('info', '(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V', "createZALogInfo")
-        def printStackTrace = new ZallDataMethodCell('printStackTrace', '(Ljava/lang/Exception;)V', "createPrintStackTrack")
-        def sALogMethods = [info, printStackTrace]
-        def sALogMethodCells = new HashMap<String, ArrayList<ZallDataMethodCell>>()
-        sALogMethodCells.put('com/zalldata/analytics/android/sdk/ZALog', sALogMethods)
-        methodCells.put(methodName, sALogMethodCells)
+        def info = new ZallAnalyticsMethodCell('info', '(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V', "createZALogInfo")
+        def printStackTrace = new ZallAnalyticsMethodCell('printStackTrace', '(Ljava/lang/Exception;)V', "createPrintStackTrack")
+        def zALogMethods = [info, printStackTrace]
+        def zALogMethodCells = new HashMap<String, ArrayList<ZallAnalyticsMethodCell>>()
+        zALogMethodCells.put('com/zalldata/analytics/android/sdk/ZALog', zALogMethods)
+        methodCells.put(methodName, zALogMethodCells)
     }
 
     void disableJsInterface(String methodName) {
-        def showUpWebView = new ZallDataMethodCell("showUpWebView", '(Landroid/webkit/WebView;Lorg/json/JSONObject;ZZ)V', "createShowUpWebViewFour")
-        def showUpX5WebView = new ZallDataMethodCell("showUpX5WebView", '(Ljava/lang/Object;Lorg/json/JSONObject;ZZ)V', "createShowUpX5WebViewFour")
-        def showUpX5WebView2 = new ZallDataMethodCell("showUpX5WebView", '(Ljava/lang/Object;Z)V', "createShowUpX5WebViewTwo")
+        def showUpWebView = new ZallAnalyticsMethodCell("showUpWebView", '(Landroid/webkit/WebView;Lorg/json/JSONObject;ZZ)V', "createShowUpWebViewFour")
+        def showUpX5WebView = new ZallAnalyticsMethodCell("showUpX5WebView", '(Ljava/lang/Object;Lorg/json/JSONObject;ZZ)V', "createShowUpX5WebViewFour")
+        def showUpX5WebView2 = new ZallAnalyticsMethodCell("showUpX5WebView", '(Ljava/lang/Object;Z)V', "createShowUpX5WebViewTwo")
         def zallDataAPIMethods = [showUpWebView, showUpX5WebView, showUpX5WebView2]
-        def zallDataAPIMethodCells = new HashMap<String, ArrayList<ZallDataMethodCell>>()
+        def zallDataAPIMethodCells = new HashMap<String, ArrayList<ZallAnalyticsMethodCell>>()
         zallDataAPIMethodCells.put('com/zalldata/analytics/android/sdk/ZallDataAPI', zallDataAPIMethods)
         methodCells.put(methodName, zallDataAPIMethodCells)
     }
 
     void disableMacAddress(String methodName) {
-        def macAddress = new ZallDataMethodCell('getMacAddress', '(Landroid/content/Context;)Ljava/lang/String;', 'createGetMacAddress')
+        def macAddress = new ZallAnalyticsMethodCell('getMacAddress', '(Landroid/content/Context;)Ljava/lang/String;', 'createGetMacAddress')
         def macMethods = [macAddress]
-        def macMethodCells = new HashMap<String, ArrayList<ZallDataMethodCell>>()
+        def macMethodCells = new HashMap<String, ArrayList<ZallAnalyticsMethodCell>>()
         macMethodCells.put("com/zalldata/analytics/android/sdk/util/ZallDataUtils", macMethods)
         methodCells.put(methodName, macMethodCells)
     }
 
     void disableCarrier(String methodName) {
-        def carrier = new ZallDataMethodCell('getCarrier', '(Landroid/content/Context;)Ljava/lang/String;', 'createGetCarrier')
+        def carrier = new ZallAnalyticsMethodCell('getCarrier', '(Landroid/content/Context;)Ljava/lang/String;', 'createGetCarrier')
         def macMethods = [carrier]
-        def macMethodCells = new HashMap<String, ArrayList<ZallDataMethodCell>>()
+        def macMethodCells = new HashMap<String, ArrayList<ZallAnalyticsMethodCell>>()
         macMethodCells.put("com/zalldata/analytics/android/sdk/util/ZallDataUtils", macMethods)
         methodCells.put(methodName, macMethodCells)
     }
 
     //todo 扩展
 
-    void createGetIMEI(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createGetIMEI(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitLdcInsn("")
@@ -87,7 +87,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createGetAndroidID(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createGetAndroidID(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitLdcInsn("")
@@ -96,7 +96,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createZALogInfo(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createZALogInfo(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitInsn(Opcodes.RETURN)
@@ -104,7 +104,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createPrintStackTrack(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createPrintStackTrack(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitInsn(Opcodes.RETURN)
@@ -112,7 +112,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createShowUpWebViewFour(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createShowUpWebViewFour(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitInsn(Opcodes.RETURN)
@@ -120,7 +120,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createShowUpX5WebViewFour(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createShowUpX5WebViewFour(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitInsn(Opcodes.RETURN)
@@ -128,7 +128,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createShowUpX5WebViewTwo(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createShowUpX5WebViewTwo(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitInsn(Opcodes.RETURN)
@@ -136,7 +136,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createGetMacAddress(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createGetMacAddress(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitLdcInsn("")
@@ -145,7 +145,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createGetCarrier(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createGetCarrier(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitLdcInsn("")
@@ -154,7 +154,7 @@ class ZallDataSDKHookConfig {
         mv.visitEnd()
     }
 
-    void createGetDeviceID(ClassVisitor classVisitor, ZallDataMethodCell methodCell) {
+    void createGetDeviceID(ClassVisitor classVisitor, ZallAnalyticsMethodCell methodCell) {
         def mv = classVisitor.visitMethod(Opcodes.ACC_PRIVATE + Opcodes.ACC_STATIC, methodCell.name, methodCell.desc, null, null)
         mv.visitCode()
         mv.visitLdcInsn("")

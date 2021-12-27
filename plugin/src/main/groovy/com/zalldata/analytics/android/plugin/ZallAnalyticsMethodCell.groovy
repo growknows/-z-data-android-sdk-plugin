@@ -1,5 +1,5 @@
 /*
- * Created by guo on 2020/1/13.
+ * Created by guo on 2015/08/12.
  * Copyright 2015－2021 Zall Data Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  */
 package com.zalldata.analytics.android.plugin
 
-class ZallDataMethodCell {
+class ZallAnalyticsMethodCell {
     /**
      * 原方法名
      */
@@ -50,13 +50,13 @@ class ZallDataMethodCell {
      */
     List<Integer> opcodes
 
-    ZallDataMethodCell(String name, String desc, String agentName) {
+    ZallAnalyticsMethodCell(String name, String desc, String agentName) {
         this.name = name
         this.desc = desc
         this.agentName = agentName
     }
 
-    ZallDataMethodCell(String name, String desc, String parent, String agentName, String agentDesc, int paramsStart, int paramsCount, List<Integer> opcodes) {
+    ZallAnalyticsMethodCell(String name, String desc, String parent, String agentName, String agentDesc, int paramsStart, int paramsCount, List<Integer> opcodes) {
         this.name = name
         this.desc = desc
         this.parent = parent
