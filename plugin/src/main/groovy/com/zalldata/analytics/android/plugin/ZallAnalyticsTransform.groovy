@@ -181,21 +181,31 @@ class ZallAnalyticsTransform extends Transform {
     }
 
     private void checkZallSDK() {
+
         try {
-            Class sdkClazz = urlClassLoader.loadClass("com.zalldata.analytics.android.sdk.ZallDataAPI")
-            ProtectionDomain pd = sdkClazz.getProtectionDomain()
+            Class sdkClass = urlClassLoader.loadClass("com.zalldata.analytics.android.sdk.ZallDataAPI")
+            ProtectionDomain pd = sdkClass.getProtectionDomain()
             CodeSource cs = pd.getCodeSource()
             zallSdkJarPath = cs.getLocation().toURI().getPath()
-        } catch (Throwable throwable) {
-            Logger.error("Can not load 'com.zalldata.analytics.android.sdk.ZallDataAPI' class: ${throwable.localizedMessage}")
+            } catch (Throwable throwable) {
+                Logger.error("Can not load 'com.zalldata.analytics.android.sdk.ZallDataAPI' class: ${throwable.localizedMessage}")
+            } catch (ClassNotFoundException ignored) {
+                if (!transformHelper.extension.disableCheckSDK) {
+                    throw new IllegalStateException("未检测到卓尔 Android SDK，请参考如下文档检查集成步骤是否正确：\n" +                        "如需关闭此提示，请添加插件配置: disableCheckSdk=true")
+                } else {
+                    Logger.warn("Can not load find ZallData SDK jar's path.")
+                }
+            } catch (Throwable ignored) {
+                Logger.warn("Can not load find ZallData SDK jar's path.")
         }
+
     }
 
     private void checkRNState() {
         try {
-            Class rnClazz = urlClassLoader.loadClass("com.zalldata.analytics.RNZallAnalyticsPackage")
+            Class rnClass = urlClassLoader.loadClass("com.zalldata.analytics.RNZallAnalyticsPackage")
             try {
-                Field versionField = rnClazz.getDeclaredField("VERSION")
+                Field versionField = rnClass.getDeclaredField("VERSION")
                 versionField.setAccessible(true)
                 transformHelper.rnVersion = versionField.get(null) as String
                 transformHelper.rnState = ZallAnalyticsTransformHelper.RN_STATE.HAS_VERSION

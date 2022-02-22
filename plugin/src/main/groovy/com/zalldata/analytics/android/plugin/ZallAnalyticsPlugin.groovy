@@ -46,7 +46,7 @@ class ZallAnalyticsPlugin implements Plugin<Project> {
             VersionUtils.isAndroidTv = isAndroidTv
             appExtension.registerTransform(new ZallAnalyticsTransform(transformHelper))
         } else {
-            Logger.error("------------您已关闭了神策插件--------------")
+            Logger.error("------------您已关闭了卓尔插件--------------")
         }
     }
 }

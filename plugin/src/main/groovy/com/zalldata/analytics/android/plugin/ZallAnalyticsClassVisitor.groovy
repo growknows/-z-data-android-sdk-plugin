@@ -149,7 +149,7 @@ class ZallAnalyticsClassVisitor extends ClassVisitor {
             if ('VERSION' == name) {
                 String version = (String) value
                 if (ZallAnalyticsUtil.compareVersion(ZallAnalyticsTransform.MIN_SDK_VERSION, version) > 0) {
-                    String errMessage = "你目前集成的神策埋点 SDK 版本号为 v${version}，请升级到 v${ZallAnalyticsTransform.MIN_SDK_VERSION} 及以上的版本。详情请参考：https://github.com/zalldata/sa-sdk-android"
+                    String errMessage = "你目前集成的卓尔埋点 SDK 版本号为 v${version}，请升级到 v${ZallAnalyticsTransform.MIN_SDK_VERSION} 及以上的版本。详情请参考：https://github.com/zalldata/sa-sdk-android"
                     Logger.error(errMessage)
                     throw new Error(errMessage)
                 }
@@ -157,7 +157,7 @@ class ZallAnalyticsClassVisitor extends ClassVisitor {
                 String minPluginVersion = (String) value
                 if (minPluginVersion != "" && minPluginVersion != null) {
                     if (ZallAnalyticsUtil.compareVersion(ZallAnalyticsTransform.VERSION, minPluginVersion) < 0) {
-                        String errMessage = "你目前集成的神策插件版本号为 v${ZallAnalyticsTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/zalldata/za-sdk-android-plugin"
+                        String errMessage = "你目前集成的卓尔插件版本号为 v${ZallAnalyticsTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/zalldata/za-sdk-android-plugin"
                         Logger.error(errMessage)
                         throw new Error(errMessage)
                     }
