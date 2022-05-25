@@ -489,6 +489,8 @@ class ZallAnalyticsClassVisitor extends ClassVisitor {
                  * android/app/Fragment，android/app/ListFragment， android/app/DialogFragment，
                  * android/support/v4/app/Fragment，android/support/v4/app/ListFragment，android/support/v4/app/DialogFragment，
                  * androidx/fragment/app/Fragment，androidx/fragment/app/ListFragment，androidx/fragment/app/DialogFragment
+                 * androidx/appcompat/app/AppCompatDialogFragment
+                 * com/google/android/material/bottomsheet/BottomSheetDialogFragment
                  */
                 if (ZallAnalyticsUtil.isInstanceOfFragment(mSuperName)) {
                     ZallAnalyticsMethodCell zallAnalyticsMethodCell = ZallFragmentHookConfig.FRAGMENT_METHODS.get(nameDesc)

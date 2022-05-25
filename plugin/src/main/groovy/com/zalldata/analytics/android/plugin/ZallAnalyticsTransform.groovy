@@ -428,7 +428,7 @@ class ZallAnalyticsTransform extends Transform {
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
             ClassVisitor classVisitor = new ZallAnalyticsClassVisitor(classWriter, classNameAnalytics, transformHelper)
             ClassReader cr = new ClassReader(srcClass)
-            cr.accept(classVisitor, ClassReader.EXPAND_FRAMES + ClassReader.SKIP_FRAMES)
+            cr.accept(classVisitor, ClassReader.EXPAND_FRAMES)
             return classWriter.toByteArray()
         } catch (Exception ex) {
             Logger.error("$classNameAnalytics.className 类执行 modifyClass 方法出现异常")

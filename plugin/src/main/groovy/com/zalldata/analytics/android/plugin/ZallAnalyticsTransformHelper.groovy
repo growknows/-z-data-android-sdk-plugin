@@ -16,12 +16,12 @@
  */
 package com.zalldata.analytics.android.plugin
 
-import com.android.build.gradle.AppExtension
+import com.android.build.gradle.BaseExtension
 
 class ZallAnalyticsTransformHelper {
 
     ZallAnalyticsExtension extension
-    AppExtension android
+    BaseExtension android
     RN_STATE rnState = RN_STATE.NOT_FOUND
     String rnVersion = ""
     ZallAnalyticsSDKHookConfig zallAnalyticsHookConfig
@@ -46,7 +46,8 @@ class ZallAnalyticsTransformHelper {
                                              "com.getui",
                                              "com.xiaomi.mipush.sdk",
                                              "com.heytap.msp.push",
-                                             'com.bumptech.glide'])
+                                             'com.bumptech.glide',
+                                             'com.tencent.tinker'])
     HashSet<String> include = new HashSet<>(['butterknife.internal.DebouncingOnClickListener',
                                              'com.jakewharton.rxbinding.view.ViewClickOnSubscribe',
                                              'com.facebook.react.uimanager.NativeViewHierarchyManager'])
@@ -66,7 +67,7 @@ class ZallAnalyticsTransformHelper {
                                                    'android.support.v7.widget.ActionMenuPresenter$OverflowMenuButton']
     URLClassLoader urlClassLoader
 
-    ZallAnalyticsTransformHelper(ZallAnalyticsExtension extension, AppExtension android) {
+    ZallAnalyticsTransformHelper(ZallAnalyticsExtension extension, BaseExtension android) {
         this.extension = extension
         this.android = android
     }

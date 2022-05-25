@@ -57,6 +57,8 @@ class ZallAnalyticsUtil {
         targetFragmentClass.add('androidx/fragment/app/Fragment')
         targetFragmentClass.add('androidx/fragment/app/ListFragment')
         targetFragmentClass.add('androidx/fragment/app/DialogFragment')
+        targetFragmentClass.add('androidx/appcompat/app/AppCompatDialogFragment')
+        targetFragmentClass.add('com/google/android/material/bottomsheet/BottomSheetDialogFragment')
 
         targetActivityClass.add('android/app/Activity')
         targetActivityClass.add('android/support/v7/app/AppCompatActivity')
